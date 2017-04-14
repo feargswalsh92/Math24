@@ -139,23 +139,6 @@ class Math24Solver():
 root = tk.Tk()
 root.title('Math24')
 
-menubar = tk.Menu(root)
-root.config(menu = menubar)
-
-# create a pulldown menu, and add it to the menu bar
-filemenu = tk.Menu(menubar, tearoff=0)
-menubar.add_cascade(label="File", menu=filemenu)
-filemenu.add_command(label="New Game")
-filemenu.add_command(label="Save")
-filemenu.add_separator()
-filemenu.add_command(label="Exit")
-
-aboutMenu = tk.Menu(menubar, tearoff=0)
-menubar.add_cascade(label="About", menu=aboutMenu)
-aboutMenu.add_command(label="Help")
-aboutMenu.add_command(label="Author")
-
-
 
 
 ###### Constants
@@ -180,10 +163,6 @@ def factorial(operator):
     except Exception:
         clear_all()
         display.insert(0, "Error")
-
-def displaySolution():
-    clear_all()
-    display.insert(0, solutionString) 
 
 
 def clear_all():
@@ -240,12 +219,9 @@ def calculate():
         clear_all()
         display.insert(0, "Error!")
 
-for row in range(MAX_ROW):
-    root.columnconfigure(row,pad=3)
 
-for column in range(MAX_COLUMN):
-    root.rowconfigure(column,pad=3)
-
+def closeWindow():
+    exit()
 
 #Top display 
 display = tk.Entry(root, font = ("Calibri", 32),bd = 20, insertwidth = 1)
@@ -265,28 +241,40 @@ def getNumbers():
         a[i]=randint(1,13)
     return a
 
-numbers = [0,0,0,0]
-numbers = getNumbers()
 
-#Call Math24Solver to find out if there are solutions for these numbers
-solver = Math24Solver()
+def newGame():
 
-#If there is no solution, generate another set of numbers
-while (solver.solve(numbers) == "No Solutions"):
+    def displaySolution():
+        clear_all()
+        display.insert(0, solutionString) 
+
+    clear_all()
     numbers = getNumbers()
 
-solutionString = solver.solve(numbers) 
+    #Call Math24Solver to find out if there are solutions for these numbers
+    solver = Math24Solver()
 
-#define display and function of each button
-#First row, four numbers
-one = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-one.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
-two = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
-two.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
-three = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-three.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
-four = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-four.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+    #If there is no solution, generate another set of numbers
+    while (solver.solve(numbers) == "No Solutions"):
+        numbers = getNumbers()
+    #First row, four numbers
+    one = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    one.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
+    two = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
+    two.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
+    three = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    three.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
+    four = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    four.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+
+    solutionString = solver.solve(numbers)
+
+    solution = tk.Button(root, text = "solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    solution.config(command=displaySolution)
+    solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
+
+newGame()
+
 
 #Second row, all operators
 plus = tk.Button(root, text = "+", command =  lambda : get_operation("+"), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
@@ -324,20 +312,33 @@ winNum.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
 
 #Fourth row, recod win-num and lost-num
-nextGame = tk.Button(root, text = "Next", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+nextGame = tk.Button(root, text = "New Game", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+nextGame.config(command=newGame)
 nextGame.grid(row = 5, column = 0, columnspan = 4, sticky = tk.W + tk.E)
-solution = tk.Button(root, text = "solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-solution.config(command=displaySolution)
-solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
 
 #Fifth row, recod win-num and lost-num
 Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
 
 
+# create a pulldown menu, and add it to the menu bar
+menubar = tk.Menu(root)
+root.config(menu = menubar)
 
+filemenu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="File", menu=filemenu)
+filemenu.add_command(label="New Game",command=newGame)
+filemenu.add_command(label="Save")
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=closeWindow)
+
+aboutMenu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="About", menu=aboutMenu)
+aboutMenu.add_command(label="Help")
+aboutMenu.add_command(label="Author")
 
 
 
