@@ -3,7 +3,7 @@ import parser
 from random import randint
 import array
 import itertools
-
+import time
 
 class Math24Solver():
     def _calculateEquation(self, lhs, operation, rhs):
@@ -164,6 +164,7 @@ def factorial(operator):
         clear_all()
         display.insert(0, "Error")
 
+#def timer():
 
 def clear_all():
     """clears all the content in the Entry widget"""
@@ -266,6 +267,7 @@ def newGame():
     three.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
     four = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     four.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+
 
     solutionString = solver.solve(numbers)
 
