@@ -5,6 +5,8 @@ import array
 import itertools
 
 
+winsCount=0
+lossesCount=0
 class Math24Solver():
     def _calculateEquation(self, lhs, operation, rhs):
         """
@@ -211,8 +213,10 @@ def calculate():
         clear_all()
         if result == 24:
             display.insert(0, "You won!")
+            winsCount+=1
         else:
             display.insert(0, "You lost!")
+            lossesCount+=1
         #clear_all()
         #display.insert(0, result)
     except Exception:
@@ -303,21 +307,24 @@ result.grid(row = 3, column = 7, sticky = tk.W + tk.E)
 
 
 
-#Third row, recod win-num and lost-num
-winNum = tk.Button(root, text = "win 0", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "red", bd = 20)
-winNum.grid(row = 4, column = 0, columnspan = 4, sticky = tk.W + tk.E)
+#Third row, record win-num and lost-num
+winLabelText = tk.StringVar()
+winLabel = tk.Label( root, textvariable=winLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "green")
+winLabelText.set("Wins: "+str(winsCount))
+winLabel.grid(row = 4, column = 0, columnspan = 4, sticky = tk.W + tk.E)
 
-winNum = tk.Button(root, text = "lose 0", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "green", bd = 20)
-winNum.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
+lossesLabelText = tk.StringVar()
+lossesLabel = tk.Label( root, textvariable=lossesLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "red")
+lossesLabelText.set("Losses: "+str(lossesCount))
+lossesLabel.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
-
-#Fourth row, recod win-num and lost-num
+#Fourth row, record win-num and lost-num
 nextGame = tk.Button(root, text = "New Game", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
 nextGame.config(command=newGame)
 nextGame.grid(row = 5, column = 0, columnspan = 4, sticky = tk.W + tk.E)
 
 
-#Fifth row, recod win-num and lost-num
+#Fifth row, record win-num and lost-num
 Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
