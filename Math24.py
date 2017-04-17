@@ -1,14 +1,16 @@
+from tkinter import *
 import tkinter as tk
 import parser
 from random import randint
 import array
 import itertools
+from LB_Pkg.LB_Func import LDR
+
 #try:
     #import simplegui
 #except ImportError:
     #import SimpleGUICS3Pygame.simpleguics3pygame as simplegui
-
-
+	
 winsCount=0
 lossesCount=0
 class Math24Solver():
@@ -140,18 +142,49 @@ class Math24Solver():
 
         return "No Solutions"
 
+location = "C:\\Users\\CSSE\\Desktop\\Ldr_Brd_DB.txt" #Path to location of leaderboard database file
 
+LDR.appendToLeaderBoard(location, "PyBot",7200) #function that adds leaders name and score to database file
+
+#Leaderboard window setup
+lb = tk.Tk()
+lb.title('LeaderBoard')
+lb.attributes('-alpha', 0.9) #gives window a transparent appearance
+
+lb.withdraw()#hides the leaderboard window
+
+lbframe = tk.Frame(lb,  padx =8, pady = 8)
+lbframe.grid(column=0, row=0, sticky=(N, W, E, S))
+lbframe.columnconfigure(0, weight=1)
+lbframe.rowconfigure(0, weight=1)
+
+i = 3 #vairable that controls leaderboard name, score rows
+topten = 0 #variable controls number of leader to print
+LeaderBoardList = LDR.sortLeaderBoard(location) #return sorted list of leaders from database file
+tk.Label(lbframe, text='Name, Score', font=("Calibri", 16)).grid(column=3, row=2, sticky=W)
+#prints top ten leaders to the leaderboard gui
+for leader in LeaderBoardList:
+    if topten<=9:
+        tk.Label(lbframe, text=leader[0]+' '+str(leader[1]), font=("Calibri", 16), relief = GROOVE).grid(column=3, row=i, sticky=W)
+        i=i+1
+        topten = topten+1
+    else:
+        break
+#button command for revealing leaderboard gui
+def viewLB(*args):
+    lb.deiconify()
+ #button command for hiding leaderboard gui  
+def hideLB(*args):
+    lb.withdraw()
 
 root = tk.Tk()
 root.title('Math24')
-
-
 
 ###### Constants
 ##
 FONT_LARGE = ("Calibri", 16)      ## selects the font of the text inside buttons
 FONT_MED = ("Calibri", 16)
-MAX_ROW = 7                        ## Max rows and columns in the GUI
+MAX_ROW = 6                        ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
 i = 0       ## for the insertion counter in Entry widget
@@ -234,7 +267,6 @@ def closeWindow():
 #Top display 
 display = tk.Entry(root, font = ("Calibri", 32),bd = 20, insertwidth = 1)
 display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
-
 
 #Create four random number between 1 and 13
 '''n1 = randint(1,13)
@@ -334,7 +366,9 @@ Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
-
+#6th row, Leaderboard button
+tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
+tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
 
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
@@ -347,13 +381,12 @@ filemenu.add_command(label="Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=closeWindow)
 
+for child in lbframe.winfo_children(): child.grid_configure(padx=5, pady=5)
+root.bind('<Return>', viewLB)
 aboutMenu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="About", menu=aboutMenu)
 aboutMenu.add_command(label="Help")
 aboutMenu.add_command(label="Author")
 
-
-
-
-
 root.mainloop()
+
