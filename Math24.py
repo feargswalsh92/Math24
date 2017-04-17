@@ -3,6 +3,10 @@ import parser
 from random import randint
 import array
 import itertools
+#try:
+    #import simplegui
+#except ImportError:
+    #import SimpleGUICS3Pygame.simpleguics3pygame as simplegui
 
 
 winsCount=0
@@ -147,7 +151,7 @@ root.title('Math24')
 ##
 FONT_LARGE = ("Calibri", 16)      ## selects the font of the text inside buttons
 FONT_MED = ("Calibri", 16)
-MAX_ROW = 6                        ## Max rows and columns in the GUI
+MAX_ROW = 7                        ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
 i = 0       ## for the insertion counter in Entry widget
@@ -230,6 +234,7 @@ def closeWindow():
 #Top display 
 display = tk.Entry(root, font = ("Calibri", 32),bd = 20, insertwidth = 1)
 display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
+
 
 #Create four random number between 1 and 13
 '''n1 = randint(1,13)
