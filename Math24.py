@@ -154,10 +154,10 @@ i = 0       ## for the insertion counter in Entry widget
 
 lastInputOperator = True       ## if last input is operator, it is true, you can input number; else it is false, and you can not input number. 
 
-b1=Button()
-b2=Button()
-b3=Button()
-b4=Button()
+b1=tk.Button()
+b2=tk.Button()
+b3=tk.Button()
+b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
 ###############
