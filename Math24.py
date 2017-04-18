@@ -151,6 +151,15 @@ MAX_ROW = 6                        ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
 i = 0       ## for the insertion counter in Entry widget
+
+lastInputOperator = True       ## if last input is operator, it is true, you can input number; else it is false, and you can not input number. 
+
+b1=Button()
+b2=Button()
+b3=Button()
+b4=Button()
+numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
+
 ###############
 def factorial(operator):
     """Calculates the factorial of the number entered."""
@@ -170,21 +179,33 @@ def factorial(operator):
 def clear_all():
     """clears all the content in the Entry widget"""
     display.delete(0, tk.END)
+    global numberButton
+    global lastInputOperator
+    for index in range (4):
+        numberButton[index].config(state = "active")
+    lastInputOperator = True
 
 
-def get_variables(num):
+def get_variables(index,num):
     """Gets the user input for operands and puts it inside the entry widget"""
     global i
-    display.insert(i, num)
-    i += 1
+    global lastInputOperator
+    global numberButton
+    if (lastInputOperator):
+        display.insert(i, num)
+        i += 1
+        numberButton[index].config(state = "disabled")
+        lastInputOperator = False
     
 
 def get_operation(operator):
     """Gets the operand the user wants to apply on the functions"""
     global i
+    global lastInputOperator
     length = len(operator)
     display.insert(i, operator)
     i += length
+    lastInputOperator = True
 
 
 def undo():
@@ -231,12 +252,7 @@ def closeWindow():
 display = tk.Entry(root, font = ("Calibri", 32),bd = 20, insertwidth = 1)
 display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
 
-#Create four random number between 1 and 13
-'''n1 = randint(1,13)
-n2 = randint(1,13)
-n3 = randint(1,13)
-n4 = randint(1,13)
-'''
+
 
 
 def getNumbers():
@@ -247,6 +263,9 @@ def getNumbers():
 
 
 def newGame():
+
+    global b1,b2,b3,b4
+    global numberButton
 
     def displaySolution():
         clear_all()
@@ -262,14 +281,16 @@ def newGame():
     while (solver.solve(numbers) == "No Solutions"):
         numbers = getNumbers()
     #First row, four numbers
-    one = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    one.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
-    two = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
-    two.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
-    three = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    three.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
-    four = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    four.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+    b1 = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(0,numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b1.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
+    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
+    b2.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
+    b3 = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(2,numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b3.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
+    b4 = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(3,numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b4.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+
+    numberButton = [b1,b2,b3,b4]
 
     solutionString = solver.solve(numbers)
 
