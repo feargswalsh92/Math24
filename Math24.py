@@ -161,6 +161,7 @@ b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
 ###############
+'''
 def factorial(operator):
     """Calculates the factorial of the number entered."""
     number = int(display.get())
@@ -174,7 +175,7 @@ def factorial(operator):
     except Exception:
         clear_all()
         display.insert(0, "Error")
-
+'''
 
 def clear_all():
     """clears all the content in the Entry widget"""
@@ -207,7 +208,7 @@ def get_operation(operator):
     i += length
     lastInputOperator = True
 
-
+'''
 def undo():
     """removes the last entered operator/variable from entry widget"""
     whole_string = display.get()
@@ -220,29 +221,34 @@ def undo():
     else:
         clear_all() 
         display.insert(0, "Error, press AC")
-
+'''
 
 def calculate():
     """
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
+    global winsCount,lossesCount,lastInputOperator
     whole_string = display.get()
     try:
         formulae = parser.expr(whole_string).compile()
         result = eval(formulae)
         clear_all()
-        if result == 24:
+        
+        if (result == 24):
             display.insert(0, "You won!")
             winsCount+=1
         else:
             display.insert(0, "You lost!")
             lossesCount+=1
+        
         #clear_all()
         #display.insert(0, result)
+        lastInputOperator = False
     except Exception:
         clear_all()
         display.insert(0, "Error!")
+        lastInputOperator = False
 
 
 def closeWindow():
