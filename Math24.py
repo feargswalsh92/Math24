@@ -160,6 +160,9 @@ b3=tk.Button()
 b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
+result=tk.Button()
+
+
 ###############
 '''
 def factorial(operator):
@@ -194,8 +197,16 @@ def get_variables(index,num):
     global numberButton
     if (lastInputOperator):
         display.insert(i, num)
-        i += 1
+        #single digital, display position is increased by 1
+        if (num <10):
+            i += 1
+        #double digitals, display position is increased by 2
+        else:
+            i = i+2
+        #disable button after you use the number, so all numbers can only be used once
         numberButton[index].config(state = "disabled")
+
+        #you can not input another number after a number
         lastInputOperator = False
     
 
@@ -228,7 +239,8 @@ def calculate():
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
-    global winsCount,lossesCount,lastInputOperator
+    global winsCount,lossesCount,lastInputOperator, numberButton
+    
     whole_string = display.get()
     try:
         formulae = parser.expr(whole_string).compile()
@@ -238,9 +250,15 @@ def calculate():
         if (result == 24):
             display.insert(0, "You won!")
             winsCount+=1
+            winLabelText.set("Wins: "+str(winsCount))
+            #disable number buttons after you win this set, so you cannot repeat it over and over again
+            for i in range(4):
+                numberButton[i].config(state = "disabled")
+                            
         else:
             display.insert(0, "You lost!")
             lossesCount+=1
+            lossesLabelText.set("Losses: "+str(lossesCount))
         
         #clear_all()
         #display.insert(0, result)
@@ -272,10 +290,24 @@ def newGame():
 
     global b1,b2,b3,b4
     global numberButton
+    global result
+
+    result.config(state = "active")
 
     def displaySolution():
+        global results, lossesCount
         clear_all()
-        display.insert(0, solutionString) 
+        display.insert(0, solutionString)
+
+        #if you click sulotion, then you fail in this set. Your lossesCount will be increased by one
+        lossesCount+=1
+        lossesLabelText.set("Losses: "+str(lossesCount))
+        
+        #One you click sultion, all number buttons and equal button will be disabled, avoiding re-enter solution to get win-ponit
+        #You can only restart new game to activate all buttons
+        for i in range(4):
+            numberButton[i].config(state = "disabled")
+            result.config(state = "disabled")
 
     clear_all()
     numbers = getNumbers()
@@ -289,7 +321,7 @@ def newGame():
     #First row, four numbers
     b1 = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(0,numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b1.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
-    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
+    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b2.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
     b3 = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(2,numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b3.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
