@@ -8,7 +8,7 @@ from tkinter import messagebox
 winsCount=0
 lossesCount=0
 class Math24Solver():
-    def _calculateEquation(self, lhs, operation, rhs):
+    def _calculateEquation(self, lhs: object, operation: object, rhs: object) -> object:
         """
         Calculates and returns the mathematical solution to the 
         equation depending on the operation

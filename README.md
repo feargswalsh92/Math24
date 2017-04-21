@@ -5,7 +5,7 @@
 ##How to Play
 
 The object of the game is to make the number 24 from the four numbers on a game card.
-You can add, subtract, multiply and divide. Use all four numbers on the card, but use each number only once. You do not have to use all four operations. from a six. Can you solve the card below?
+You can add, subtract, multiply and divide. Use all four numbers on the card, but use each number only once. You do not have to use all four operations. 
 
 ##Requirements
 
