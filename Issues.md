@@ -9,16 +9,16 @@ The general layout is from Calculator (most part of the code), where solution co
 ## Some issues
 
 
- 2 (Alla-WIP)- We need to add display of the rule for this game somewhere, so player can know how to play.
+ 2 (Alla-Completed)- We need to add display of the rule for this game somewhere, so player can know how to play.
  3-(Jun- Completed) We should use all four numbers and each number can be used only once, each number must be followed by an operator. 
 	Current code will show succeed if you click "=" and whatever showing on textbox gives you 24.
  4- We need to add Timer
  5- (Alla/Jun -Completed) Not sure how to define that you loose or win current game. 
  7- Instead showing numbers, we may want to show card images. I think it will be cool.
  9- What is the condition that you win the final game? points? It is not implemented.
- 10-(Alla-WIP: Will add game instructions in the About-->Help) We can add something in dropdown menu.
+ 10-(Alla-Completed: Will add game instructions in the About-->Help) We can add something in dropdown menu.
  11-Writting test, at least for each function/method.
-
+ 12-(Alla-WIP): Manual UI testing. Will document all the tests performed.
 ---------------------------------------------- 
  UNKNOWN (ISSUES THAT ARE NOT CLEAR):
 ----------------------------------------------

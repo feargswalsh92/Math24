@@ -3,7 +3,7 @@ import parser
 from random import randint
 import array
 import itertools
-
+from tkinter import messagebox
 
 winsCount=0
 lossesCount=0
@@ -285,6 +285,9 @@ def getNumbers():
         a[i]=randint(1,13)
     return a
 
+def gameHelp():
+        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmentic operations to get the four numeric values that are presented to result in the value 24.If you get stuck, click the solution button to reveal the answer."
+        messagebox.showinfo(title="Game Instructions", message=gameInstructions)
 
 def newGame():
 
@@ -388,8 +391,6 @@ Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
-
-
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
 root.config(menu = menubar)
@@ -403,8 +404,16 @@ filemenu.add_command(label="Exit", command=closeWindow)
 
 aboutMenu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="About", menu=aboutMenu)
-aboutMenu.add_command(label="Help")
+
+helpMenu = tk.Menu(menubar, tearoff=0)
+aboutMenu.add_cascade(label="Help",menu=helpMenu)
 aboutMenu.add_command(label="Author")
+
+helpMenu.add_command(label="Game Instructions", command=gameHelp)
+
+
+
+
 
 
 
