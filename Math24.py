@@ -7,6 +7,7 @@ from tkinter import messagebox
 
 winsCount=0
 lossesCount=0
+
 class Math24Solver():
     def _calculateEquation(self, lhs: object, operation: object, rhs: object) -> object:
         """
@@ -233,24 +234,27 @@ def undo():
         clear_all() 
         display.insert(0, "Error, press AC")
 '''
+global attemptAtSolution
+attemptAtSolution=False
 
 def calculate():
     """
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
-    global winsCount,lossesCount,lastInputOperator, numberButton
+    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution
     
     whole_string = display.get()
     try:
         formulae = parser.expr(whole_string).compile()
         result = eval(formulae)
         clear_all()
-        
+        attemptAtSolution=True
         if (result == 24):
             display.insert(0, "You won!")
             winsCount+=1
             winLabelText.set("Wins: "+str(winsCount))
+
             #disable number buttons after you win this set, so you cannot repeat it over and over again
             for i in range(4):
                 numberButton[i].config(state = "disabled")
@@ -259,6 +263,7 @@ def calculate():
             display.insert(0, "You lost!")
             lossesCount+=1
             lossesLabelText.set("Losses: "+str(lossesCount))
+
         
         #clear_all()
         #display.insert(0, result)
@@ -278,7 +283,6 @@ display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
 
 
 
-
 def getNumbers():
     a=[0,0,0,0]
     for i in range(4):
@@ -294,16 +298,19 @@ def newGame():
     global b1,b2,b3,b4
     global numberButton
     global result
+    global attemptAtSolution
 
     result.config(state = "active")
-
     def displaySolution():
         global results, lossesCount
         clear_all()
         display.insert(0, solutionString)
 
-        #if you click sulotion, then you fail in this set. Your lossesCount will be increased by one
-        lossesCount+=1
+        #if you click sulotion, then you fail in this set. Your lossesCount will be increased by one only
+        #if you press it in before you attempt a solution and press the "=" sign to evaluate the solution
+        if(attemptAtSolution==False):
+            lossesCount+=1
+            
         lossesLabelText.set("Losses: "+str(lossesCount))
         
         #One you click sultion, all number buttons and equal button will be disabled, avoiding re-enter solution to get win-ponit
@@ -312,9 +319,11 @@ def newGame():
             numberButton[i].config(state = "disabled")
             result.config(state = "disabled")
 
+        #disable the solution button to prevent repeated clicks before starting a new game
+        solution.config(state = "disabled")
     clear_all()
     numbers = getNumbers()
-
+    attemptAtSolution=False
     #Call Math24Solver to find out if there are solutions for these numbers
     solver = Math24Solver()
 
@@ -335,7 +344,7 @@ def newGame():
 
     solutionString = solver.solve(numbers)
 
-    solution = tk.Button(root, text = "solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    solution = tk.Button(root, text = "Solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     solution.config(command=displaySolution)
     solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 

@@ -20,8 +20,12 @@ The general layout is from Calculator (most part of the code), where solution co
  11-Writting test, at least for each function/method.
  12-(Alla-WIP): Manual UI testing. Will document all the tests performed.
  13-(): Include a solution row immediately below were we type in the answer that will display the solution in the event of a loss.
- 14-(Alla-WIP): Include an enhancement that prevents users from repeatadly clicking the "solution" button which increases the losses score. 
- 15- (Alla-WIP): Include an enhancement that prevents adding to the losses count in the event you click on the "Solution" button when you loosea round
+ 14-(Alla-Completed): Include an enhancement that prevents users from repeatadly clicking the "solution" button which increases the 
+	losses score. 
+ 15-(Alla-Completed): Include an enhancement that prevents adding to the losses count in the event you click on the "Solution" button when you 
+	loose a game round since you already have the loss count goes up by one when you loose.
+ 16-(Alla-Completed): Include an enhancement that prevents adding to the losses or wins count in the event you click on the "Solution" button
+				just to see the system version of the solution.
 ---------------------------------------------- 
  UNKNOWN (ISSUES THAT ARE NOT CLEAR):
 ----------------------------------------------
