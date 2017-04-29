@@ -247,17 +247,16 @@ def calculate():
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
     global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution, numberUsed
-    
-    whole_string = display.get()
-    try:
-        formulae = parser.expr(whole_string).compile()
-        result = eval(formulae)
-        display.delete(0, tk.END)
-        display.insert(0, result)
-        if (numberUsed == 4):
+    if (numberUsed == 4):
+        whole_string = display.get()
+        try:
+            formulae = parser.expr(whole_string).compile()
+            result = eval(formulae)
+            clear_all()
             attemptAtSolution=True
             if (result == 24):
-                display.insert(4, "     You won!")
+                display.delete(0, tk.END)
+                display.insert(0, "24      You won!")
                 winsCount+=1
                 winLabelText.set("Wins: "+str(winsCount))
                 reset.config(state = "disabled")
@@ -267,18 +266,20 @@ def calculate():
                     numberButton[i].config(state = "disabled")
                             
             else:
-                display.insert(4, "     You lost!")
+                display.insert(0, "%.2f" % result)
+                display.insert(8, "   You lost!")
                 lossesCount+=1
                 lossesLabelText.set("Losses: "+str(lossesCount))
 
         
-        #clear_all()
-        #display.insert(0, result)
-        lastInputOperator = False
-    except Exception:
-        clear_all()
-        display.insert(0, "Error!")
-        lastInputOperator = False
+            #clear_all()
+            #display.insert(0, result)
+            lastInputOperator = False
+
+        except Exception:
+            clear_all()
+            display.insert(0, "Error!")
+            lastInputOperator = False
 
 
 def closeWindow():
