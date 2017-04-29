@@ -188,14 +188,15 @@ root.title('Math24')
 
 ###### Constants
 ##
-FONT_LARGE = ("Calibri", 16)      ## selects the font of the text inside buttons
+FONT_LARGE = ("Calibri", 16)        ## selects the font of the text inside buttons
 FONT_MED = ("Calibri", 16)
-MAX_ROW = 6                        ## Max rows and columns in the GUI
+MAX_ROW = 6                           ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
-i = 0       ## for the insertion counter in Entry widget
+i = 0                                 ## for the insertion counter in Entry widget
 
-lastInputOperator = True       ## if last input is operator, it is true, you can input number; else it is false, and you can not input number. 
+lastInputOperator = True            ## if last input is operator, it is true, you can input number; else it is false, and you can not input number.
+numberUsed = 0                      #Make sure that all four number will be used
 
 b1=tk.Button()
 b2=tk.Button()
@@ -204,9 +205,10 @@ b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
 result=tk.Button()
+reset=tk.Button()
 
 
-###############
+# Here we are not going to use factorial operation
 '''
 def factorial(operator):
     """Calculates the factorial of the number entered."""
@@ -227,15 +229,16 @@ def clear_all():
     """clears all the content in the Entry widget"""
     display.delete(0, tk.END)
     global numberButton
-    global lastInputOperator
+    global lastInputOperator, numberUsed
     for index in range (4):
         numberButton[index].config(state = "active")
     lastInputOperator = True
+    numberUsed = 0
 
 
 def get_variables(index,num):
     """Gets the user input for operands and puts it inside the entry widget"""
-    global i
+    global i, numberUsed
     global lastInputOperator
     global numberButton
     if (lastInputOperator):
@@ -251,6 +254,7 @@ def get_variables(index,num):
 
         #you can not input another number after a number
         lastInputOperator = False
+        numberUsed += 1
     
 
 def get_operation(operator):
@@ -284,36 +288,40 @@ def calculate():
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
-    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution
-    
-    whole_string = display.get()
-    try:
-        formulae = parser.expr(whole_string).compile()
-        result = eval(formulae)
-        clear_all()
-        attemptAtSolution=True
-        if (result == 24):
-            display.insert(0, "You won!")
-            winsCount+=1
-            winLabelText.set("Wins: "+str(winsCount))
+    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution, numberUsed
+    if (numberUsed == 4):
+        whole_string = display.get()
+        try:
+            formulae = parser.expr(whole_string).compile()
+            result = eval(formulae)
+            clear_all()
+            attemptAtSolution=True
+            if (result == 24):
+                display.delete(0, tk.END)
+                display.insert(0, "24      You won!")
+                winsCount+=1
+                winLabelText.set("Wins: "+str(winsCount))
+                reset.config(state = "disabled")
 
-            #disable number buttons after you win this set, so you cannot repeat it over and over again
-            for i in range(4):
-                numberButton[i].config(state = "disabled")
+                #disable number buttons after you win this set, so you cannot repeat it over and over again
+                for i in range(4):
+                    numberButton[i].config(state = "disabled")
                             
-        else:
-            display.insert(0, "You lost!")
-            lossesCount+=1
-            lossesLabelText.set("Losses: "+str(lossesCount))
+            else:
+                display.insert(0, "%.2f" % result)
+                display.insert(8, "   You lost!")
+                lossesCount+=1
+                lossesLabelText.set("Losses: "+str(lossesCount))
 
         
-        #clear_all()
-        #display.insert(0, result)
-        lastInputOperator = False
-    except Exception:
-        clear_all()
-        display.insert(0, "Error!")
-        lastInputOperator = False
+            #clear_all()
+            #display.insert(0, result)
+            lastInputOperator = False
+
+        except Exception:
+            clear_all()
+            display.insert(0, "Error!")
+            lastInputOperator = False
 
 
 def closeWindow():
@@ -332,17 +340,23 @@ def getNumbers():
     return a
 
 def gameHelp():
-        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmentic operations to get the four numeric values that are presented to result in the value 24.If you get stuck, click the solution button to reveal the answer."
+        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmetic operations to get the four numeric values that are presented to result in the value 24." \
+                         "All four numbers must be used and each number can be used only once. You can use 'C' button to restart current set. If you get stuck, click the solution button to reveal the answer."
         messagebox.showinfo(title="Game Instructions", message=gameInstructions)
 
 def newGame():
 
     global b1,b2,b3,b4
     global numberButton
-    global result
+    global result, reset
     global attemptAtSolution
 
+    global numberUsed
+
+    numberUsed = 0
+
     result.config(state = "active")
+    reset.config(state = "active")
     def displaySolution():
         global results, lossesCount
         clear_all()

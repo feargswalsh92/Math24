@@ -6,10 +6,18 @@ from Math24 import Math24Solver
 
 class TestMath24Solver(TestCase):
     def test__calculateEquation(self):
+        #self.fail()
         self.assertEqual(Math24Solver._calculateEquation(self,2,"+",3),5)
+     #    self.assertEqual(Math24Solver._calculateEquation(self, 2, "-", 3), -1)
+     #   #'  self.assertEqual(Math24Solver._calculateEquation(self, 2, "-", 3), -1)
+     # #   self.assertEqual(Math24Solver._calculateEquation(self, 2, "-", 3), -1)
 
 
+
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> aeea5326dc342083509060fbd2318bce7a0f07af
 class TestMath24Solver(TestCase):
 
     def test__calculateEquation(self):
@@ -78,4 +86,8 @@ class TestMath24Solver(TestCase):
         values2 = [2, 2, 2]  # too few digits
         with self.assertRaises(ValueError):
             Math24Solver.solve(s, values2)
+<<<<<<< HEAD
 >>>>>>> d0faee827a1924d25b51982b9ee17d1e46eaf9d0
+=======
+
+>>>>>>> aeea5326dc342083509060fbd2318bce7a0f07af
