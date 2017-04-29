@@ -1,0 +1,44 @@
+---------------------
+Manual UI Test Cases:
+---------------------
+------------------------------------------------------------------------------------------------
+Testing scenario #1: General UI Testing with normal game play functionality
+Testing Specifics: Used Application buttons for all numeric input and actions. No keyboard 
+Testing results: No issues found
+------------------------------------------------------------------------------------------------
+1.Tested winning scenario --> Wins: 1  Losses:0
+2.Tested winning scenario --> Wins: 2  Losses:0
+3.Tested loosing scenario (Clicked solution button)--> Wins: 2 Losses:1
+4.Tested  loosing scenario (Clicked solution button)--> Wins:3 Losses:2
+5.Tested winning scenario --> Wins: 3  Losses:2
+6.Tested winning scenario --> Wins: 4  Losses:2
+7.Tested loosing scenario (Clicked solution button)--> Wins: 4  Losses:3
+8.Tested winning scenario --> Wins: 5  Losses:3
+9.Tested loosing scenario (Clicked solution button)--> Wins: 6  Losses:4
+
+---------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+Testing scenario #2:
+Testing Specifics: Used a combination of keyboard and UI buttons
+Testing results: Found one bug needing attention. See Test #3 below.
+------------------------------------------------------------------------
+1. Tested winning scenario, but test failed.
+1a. Presented with the numeric values:  2,10,11,and 8.
+1b. Using the keyboard, I typed ((11-10)+2)*8 which should result in 24
+1c. Clicked the "=" sign and result was a display message "You lost!"
+1d. Clicked on the "solution" button, the display was (2-10+11)*8
+
+2. Tested winning scenario, and test passed
+2a. Presented with the numeric values:12,11,8, and 1.
+1b. Using the keyboard, I typed ((11-8)-1) * 12
+
+3.Tested a loosing scenario, and test passed but discovered a bug.
+3a. Presented with the numeric values 9,11,3, and 7. 
+3b. Using the UI buttons i selected a series of numbers
+	and operations that will yeild a deffinate loss.
+3c. Score at this point was Wins: 1  Losses:3
+3d. I clicked in the solution button and the solution was displayed but 
+	the Losses count was incremented by one to display 4.
+
+------------------------------------------------

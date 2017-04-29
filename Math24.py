@@ -4,6 +4,7 @@ import parser
 from random import randint
 import array
 import itertools
+<<<<<<< HEAD
 from LB_Pkg.LB_Func import LDR
 
 #try:
@@ -11,10 +12,15 @@ from LB_Pkg.LB_Func import LDR
 #except ImportError:
     #import SimpleGUICS3Pygame.simpleguics3pygame as simplegui
 	
+=======
+from tkinter import messagebox
+
+>>>>>>> d0faee827a1924d25b51982b9ee17d1e46eaf9d0
 winsCount=0
 lossesCount=0
+
 class Math24Solver():
-    def _calculateEquation(self, lhs, operation, rhs):
+    def _calculateEquation(self, lhs: object, operation: object, rhs: object) -> object:
         """
         Calculates and returns the mathematical solution to the 
         equation depending on the operation
@@ -197,6 +203,9 @@ b3=tk.Button()
 b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
+result=tk.Button()
+
+
 ###############
 '''
 def factorial(operator):
@@ -231,8 +240,16 @@ def get_variables(index,num):
     global numberButton
     if (lastInputOperator):
         display.insert(i, num)
-        i += 1
+        #single digital, display position is increased by 1
+        if (num <10):
+            i += 1
+        #double digitals, display position is increased by 2
+        else:
+            i = i+2
+        #disable button after you use the number, so all numbers can only be used once
         numberButton[index].config(state = "disabled")
+
+        #you can not input another number after a number
         lastInputOperator = False
     
 
@@ -259,25 +276,36 @@ def undo():
         clear_all() 
         display.insert(0, "Error, press AC")
 '''
+global attemptAtSolution
+attemptAtSolution=False
 
 def calculate():
     """
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
-    global winsCount,lossesCount,lastInputOperator
+    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution
+    
     whole_string = display.get()
     try:
         formulae = parser.expr(whole_string).compile()
         result = eval(formulae)
         clear_all()
-        
+        attemptAtSolution=True
         if (result == 24):
             display.insert(0, "You won!")
             winsCount+=1
+            winLabelText.set("Wins: "+str(winsCount))
+
+            #disable number buttons after you win this set, so you cannot repeat it over and over again
+            for i in range(4):
+                numberButton[i].config(state = "disabled")
+                            
         else:
             display.insert(0, "You lost!")
             lossesCount+=1
+            lossesLabelText.set("Losses: "+str(lossesCount))
+
         
         #clear_all()
         #display.insert(0, result)
@@ -297,26 +325,47 @@ display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
 
 
 
-
 def getNumbers():
     a=[0,0,0,0]
     for i in range(4):
         a[i]=randint(1,13)
     return a
 
+def gameHelp():
+        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmentic operations to get the four numeric values that are presented to result in the value 24.If you get stuck, click the solution button to reveal the answer."
+        messagebox.showinfo(title="Game Instructions", message=gameInstructions)
 
 def newGame():
 
     global b1,b2,b3,b4
     global numberButton
+    global result
+    global attemptAtSolution
 
+    result.config(state = "active")
     def displaySolution():
+        global results, lossesCount
         clear_all()
-        display.insert(0, solutionString) 
+        display.insert(0, solutionString)
 
+        #if you click sulotion, then you fail in this set. Your lossesCount will be increased by one only
+        #if you press it in before you attempt a solution and press the "=" sign to evaluate the solution
+        if(attemptAtSolution==False):
+            lossesCount+=1
+            
+        lossesLabelText.set("Losses: "+str(lossesCount))
+        
+        #One you click sultion, all number buttons and equal button will be disabled, avoiding re-enter solution to get win-ponit
+        #You can only restart new game to activate all buttons
+        for i in range(4):
+            numberButton[i].config(state = "disabled")
+            result.config(state = "disabled")
+
+        #disable the solution button to prevent repeated clicks before starting a new game
+        solution.config(state = "disabled")
     clear_all()
     numbers = getNumbers()
-
+    attemptAtSolution=False
     #Call Math24Solver to find out if there are solutions for these numbers
     solver = Math24Solver()
 
@@ -326,7 +375,7 @@ def newGame():
     #First row, four numbers
     b1 = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(0,numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b1.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
-    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
+    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b2.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
     b3 = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(2,numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     b3.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
@@ -337,7 +386,7 @@ def newGame():
 
     solutionString = solver.solve(numbers)
 
-    solution = tk.Button(root, text = "solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    solution = tk.Button(root, text = "Solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     solution.config(command=displaySolution)
     solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
@@ -393,10 +442,13 @@ Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
+<<<<<<< HEAD
 #6th row, Leaderboard button
 tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
 tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
 
+=======
+>>>>>>> d0faee827a1924d25b51982b9ee17d1e46eaf9d0
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
 root.config(menu = menubar)
@@ -412,8 +464,23 @@ for child in lbframe.winfo_children(): child.grid_configure(padx=5, pady=5)
 root.bind('<Return>', viewLB)
 aboutMenu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="About", menu=aboutMenu)
-aboutMenu.add_command(label="Help")
+
+helpMenu = tk.Menu(menubar, tearoff=0)
+aboutMenu.add_cascade(label="Help",menu=helpMenu)
 aboutMenu.add_command(label="Author")
 
+<<<<<<< HEAD
+=======
+helpMenu.add_command(label="Game Instructions", command=gameHelp)
+
+
+
+
+
+
+
+
+
+>>>>>>> d0faee827a1924d25b51982b9ee17d1e46eaf9d0
 root.mainloop()
 
