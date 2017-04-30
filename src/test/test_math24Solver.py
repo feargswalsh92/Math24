@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from Math24 import Math24Solver
+from src.main.Math24 import Math24Solver
 
 <<<<<<< HEAD
 

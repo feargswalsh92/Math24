@@ -9,7 +9,7 @@ winsCount=0
 lossesCount=0
 
 class Math24Solver():
-    def _calculateEquation(self, lhs: object, operation: object, rhs: object) -> object:
+    def _calculateEquation(self, lhs: object, operation: object, rhs: object):    #-> object:
         """
         Calculates and returns the mathematical solution to the 
         equation depending on the operation
@@ -28,6 +28,8 @@ class Math24Solver():
             if rhs is not 0:
                 return lhs / rhs
 
+
+                #test
     def _is24(self, values, op1, op2, op3):
         """
         Checks whether the complete equation equates to 24.
