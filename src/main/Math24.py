@@ -1,9 +1,17 @@
+from tkinter import *
+from LB_Pkg.LB_Func import LDR
+from LB_Pkg.LB_Func import MessageBox
+from tkinter import messagebox
+from random import randint
 import tkinter as tk
 import parser
-from random import randint
 import array
 import itertools
-from tkinter import messagebox
+
+#try:
+    #import simplegui
+#except ImportError:
+    #import SimpleGUICS3Pygame.simpleguics3pygame as simplegui
 
 winsCount=0
 lossesCount=0
@@ -139,23 +147,60 @@ class Math24Solver():
 
         return "No Solutions"
 
+location = LDR.init_DB_CWD() #Path to location of leaderboard database file (current working directory)
+#check if current score (wins) is high score
+if  LDR.checkIfHighScore(location,winsCount):
+    name = MessageBox.mbox('Congratulation!!!\n New High Score '+str(winsCount)+'\n\nEnter your name', "ok", "cancel",True,False,True)
+    #function that adds leaders name and score to database file
+    LDR.appendToLeaderBoard(location, name, winsCount) #function that adds leaders name and score to data file
 
+#Leaderboard window setup
+lb = tk.Tk()
+lb.title('LeaderBoard')
+lb.attributes('-alpha', 0.9) #gives window a transparent appearance
+
+lb.withdraw()#hides the leaderboard window
+
+lbframe = tk.Frame(lb,  padx =8, pady = 8)
+lbframe.grid(column=0, row=0, sticky=(N, W, E, S))
+lbframe.columnconfigure(0, weight=1)
+lbframe.rowconfigure(0, weight=1)
+
+i = 3 #variable that controls leaderboard name, score rows
+topten = 0 #variable controls number of leader to print
+LeaderBoardList = LDR.sortLeaderBoard(location) #return sorted list of leaders from database file
+tk.Label(lbframe, text='Rank, Name, Score', font=("Calibri", 16)).grid(column=3, row=2, sticky=W)
+
+#prints top ten leaders to the leaderboard gui
+for leader in LeaderBoardList:
+    if topten<=9:
+        tk.Label(lbframe, text=str(topten+1)+', '+leader[0]+', '+str(leader[1]), font=("Calibri", 16), relief = GROOVE).grid(column=3, row=i, sticky=W)
+        i=i+1
+        topten = topten+1
+    else:
+        break
+
+#button command for revealing leaderboard gui
+def viewLB(*args):
+    lb.deiconify()
+ #button command for hiding leaderboard gui  
+def hideLB(*args):
+    lb.withdraw()
 
 root = tk.Tk()
 root.title('Math24')
 
-
-
 ###### Constants
 ##
-FONT_LARGE = ("Calibri", 16)      ## selects the font of the text inside buttons
+FONT_LARGE = ("Calibri", 16)        ## selects the font of the text inside buttons
 FONT_MED = ("Calibri", 16)
-MAX_ROW = 6                        ## Max rows and columns in the GUI
+MAX_ROW = 6                           ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
-i = 0       ## for the insertion counter in Entry widget
+i = 0                                 ## for the insertion counter in Entry widget
 
-lastInputOperator = True       ## if last input is operator, it is true, you can input number; else it is false, and you can not input number. 
+lastInputOperator = True            ## if last input is operator, it is true, you can input number; else it is false, and you can not input number.
+numberUsed = 0                      #Make sure that all four number will be used
 
 b1=tk.Button()
 b2=tk.Button()
@@ -164,9 +209,10 @@ b4=tk.Button()
 numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
 
 result=tk.Button()
+reset=tk.Button()
 
 
-###############
+# Here we are not going to use factorial operation
 '''
 def factorial(operator):
     """Calculates the factorial of the number entered."""
@@ -187,15 +233,16 @@ def clear_all():
     """clears all the content in the Entry widget"""
     display.delete(0, tk.END)
     global numberButton
-    global lastInputOperator
+    global lastInputOperator, numberUsed
     for index in range (4):
         numberButton[index].config(state = "active")
     lastInputOperator = True
+    numberUsed = 0
 
 
 def get_variables(index,num):
     """Gets the user input for operands and puts it inside the entry widget"""
-    global i
+    global i, numberUsed
     global lastInputOperator
     global numberButton
     if (lastInputOperator):
@@ -211,6 +258,7 @@ def get_variables(index,num):
 
         #you can not input another number after a number
         lastInputOperator = False
+        numberUsed += 1
     
 
 def get_operation(operator):
@@ -244,36 +292,40 @@ def calculate():
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
-    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution
-    
-    whole_string = display.get()
-    try:
-        formulae = parser.expr(whole_string).compile()
-        result = eval(formulae)
-        clear_all()
-        attemptAtSolution=True
-        if (result == 24):
-            display.insert(0, "You won!")
-            winsCount+=1
-            winLabelText.set("Wins: "+str(winsCount))
+    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution, numberUsed
+    if (numberUsed == 4):
+        whole_string = display.get()
+        try:
+            formulae = parser.expr(whole_string).compile()
+            result = eval(formulae)
+            clear_all()
+            attemptAtSolution=True
+            if (result == 24):
+                display.delete(0, tk.END)
+                display.insert(0, "24      You won!")
+                winsCount+=1
+                winLabelText.set("Wins: "+str(winsCount))
+                reset.config(state = "disabled")
 
-            #disable number buttons after you win this set, so you cannot repeat it over and over again
-            for i in range(4):
-                numberButton[i].config(state = "disabled")
+                #disable number buttons after you win this set, so you cannot repeat it over and over again
+                for i in range(4):
+                    numberButton[i].config(state = "disabled")
                             
-        else:
-            display.insert(0, "You lost!")
-            lossesCount+=1
-            lossesLabelText.set("Losses: "+str(lossesCount))
+            else:
+                display.insert(0, "%.2f" % result)
+                display.insert(8, "   You lost!")
+                lossesCount+=1
+                lossesLabelText.set("Losses: "+str(lossesCount))
 
         
-        #clear_all()
-        #display.insert(0, result)
-        lastInputOperator = False
-    except Exception:
-        clear_all()
-        display.insert(0, "Error!")
-        lastInputOperator = False
+            #clear_all()
+            #display.insert(0, result)
+            lastInputOperator = False
+
+        except Exception:
+            clear_all()
+            display.insert(0, "Error!")
+            lastInputOperator = False
 
 
 def closeWindow():
@@ -292,17 +344,23 @@ def getNumbers():
     return a
 
 def gameHelp():
-        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmentic operations to get the four numeric values that are presented to result in the value 24.If you get stuck, click the solution button to reveal the answer."
+        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmetic operations to get the four numeric values that are presented to result in the value 24." \
+                         "All four numbers must be used and each number can be used only once. You can use 'C' button to restart current set. If you get stuck, click the solution button to reveal the answer."
         messagebox.showinfo(title="Game Instructions", message=gameInstructions)
 
 def newGame():
 
     global b1,b2,b3,b4
     global numberButton
-    global result
+    global result, reset
     global attemptAtSolution
 
+    global numberUsed
+
+    numberUsed = 0
+
     result.config(state = "active")
+    reset.config(state = "active")
     def displaySolution():
         global results, lossesCount
         clear_all()
@@ -349,6 +407,7 @@ def newGame():
     solution = tk.Button(root, text = "Solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     solution.config(command=displaySolution)
     solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
+    
 
 newGame()
 
@@ -378,18 +437,16 @@ reset.grid(row = 3, column = 6, sticky = tk.W + tk.E)
 result = tk.Button(root, text = "=", command = calculate, font=FONT_LARGE, padx = PADSIZE, pady = PADSIZE, bd = 20)
 result.grid(row = 3, column = 7, sticky = tk.W + tk.E)
 
-
-
 #Third row, record win-num and lost-num
 winLabelText = tk.StringVar()
 winLabel = tk.Label( root, textvariable=winLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "green")
 winLabelText.set("Wins: "+str(winsCount))
 winLabel.grid(row = 4, column = 0, columnspan = 4, sticky = tk.W + tk.E)
-
 lossesLabelText = tk.StringVar()
 lossesLabel = tk.Label( root, textvariable=lossesLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "red")
 lossesLabelText.set("Losses: "+str(lossesCount))
 lossesLabel.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
+
 
 #Fourth row, record win-num and lost-num
 nextGame = tk.Button(root, text = "New Game", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
@@ -402,6 +459,11 @@ Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
+
+#6th row, Leaderboard button
+tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
+tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
+
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
 root.config(menu = menubar)
@@ -413,6 +475,8 @@ filemenu.add_command(label="Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=closeWindow)
 
+for child in lbframe.winfo_children(): child.grid_configure(padx=5, pady=5)
+root.bind('<Return>', viewLB)
 aboutMenu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="About", menu=aboutMenu)
 
@@ -421,13 +485,6 @@ aboutMenu.add_cascade(label="Help",menu=helpMenu)
 aboutMenu.add_command(label="Author")
 
 helpMenu.add_command(label="Game Instructions", command=gameHelp)
-
-
-
-
-
-
-
 
 
 root.mainloop()
