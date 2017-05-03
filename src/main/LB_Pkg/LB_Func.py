@@ -27,6 +27,10 @@ class LDR(object):
 
     #Check if the score is a high score or or top ten
     def checkIfHighScore(databasefile, score):
+        """
+        Function takes a path to a text file, and int score, and compares 
+        all items of the text file to the int score and returns true or false
+        """
         if score<1:
             return False
         #conditions that check if file is empty
@@ -54,6 +58,9 @@ class LDR(object):
         return False
     #Function that sorts leaderboard database file
     def sortLeaderBoard(databasefile):
+        """
+        Function takes representation of a string text file path sort all the items by int size
+        """
         LeaderBoardDataBaseFile = open(databasefile)
         try:
             LeaderBoardParseList = [] #creates list
@@ -74,6 +81,9 @@ class LDR(object):
     
     #Function takes a db text file path (string), name and score, overwrite file
     def overWriteLeaderBoard(databasefile, name, score):
+        """
+        Function takes a string file path, string name, int and write to file
+        """
         LeaderBoardDataBaseFile = open(databasefile, "w")
         try:
             leader = name+','+str(score)+'\n'
@@ -83,6 +93,10 @@ class LDR(object):
            
     #Append Leader name and score to leaderboard
     def appendToLeaderBoard(databasefile, name, score):
+        """
+        Function takes a string file path, string name int score, adds a new line to the file containing 
+        name and score
+        """
         LeaderBoardDataBaseFile = open(databasefile, "a")
         try:
             leader = name+','+str(score)+'\n'
@@ -92,6 +106,9 @@ class LDR(object):
 
     #Check if database is empty
     def checkIfDataBaseFileIsEmpty(pathstring):
+        """
+        Function takes a string file path and check if file is empty returns bool
+        """
         LeaderBoardDataBaseFile = open(pathstring)
         if  LeaderBoardDataBaseFile.readline() == "":
             LeaderBoardDataBaseFile.close()
@@ -101,6 +118,9 @@ class LDR(object):
 
     #Check if database txt file exists
     def checkIfDataBaseFileExist(pathstring):
+        """
+        Function takes a string file path and check if file exists, returns a bool
+        """
         if os.path.isfile(pathstring):
            return True
         else:
@@ -108,8 +128,12 @@ class LDR(object):
 
     #Intializes database file location to the current working directory
     def init_DB_CWD():
+        """
+        Function initializes the file and location to the running script working directory
+        returns a string representation of the initialized file and location
+        """
         #creates string containing the database file and working directory
-        location = os.path.dirname(os.path.realpath(sys.argv[0]))+"\\Ldr_Brd_DB.txt" 
+        location = os.path.dirname(os.path.realpath(sys.argv[0]))+"\\Ldr_Brd_DB.csv" 
         if LDR.checkIfDataBaseFileExist(location): #if exist return string representation
             return location
         else: #else creates the database txt file and places it in the current working directory
@@ -119,6 +143,9 @@ class LDR(object):
         
     #Check if databse is full(10 Leaders)
     def checkIfDataBaseFileIsFull(pathstring):
+        """
+        Function takes a string file path and check if reached max length size, returns bool
+        """
         LeaderBoardDataBaseFile = open(pathstring)
         count=0
         for line in LeaderBoardDataBaseFile:
@@ -129,9 +156,12 @@ class LDR(object):
         else:
             LeaderBoardDataBaseFile.close()
             return False  
-
+#Message box for leaderboard user prompt
 class MessageBox(object):
-
+    """
+    Object contains implementation for a seperate frame independant of root
+    for leaderboard user prompt
+    """    
     def __init__(self, msg, b1, b2, frame, t, entry):
 
         root = self.root = tkinter.Tk()
