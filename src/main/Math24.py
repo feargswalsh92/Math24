@@ -161,10 +161,11 @@ lb.attributes('-alpha', 0.9) #gives window a transparent appearance
 
 lb.withdraw()#hides the leaderboard window
 
-lbframe = tk.Frame(lb,  padx =50, pady = 15)
+lbframe = tk.Frame(lb,  padx =8, pady = 8)
 lbframe.grid(column=0, row=0, sticky=(N, W, E, S))
 lbframe.columnconfigure(0, weight=1)
 lbframe.rowconfigure(0, weight=1)
+
 
 
 #button command for revealing leaderboard gui
@@ -187,8 +188,6 @@ def viewLB(*args):
 def hideLB(*args):
     lb.withdraw()
 
-def closeLDR():#overrides the close(x) button, instead triggers the hide view
-    hideLB()
 
 ###### Constants
 ##
@@ -453,7 +452,6 @@ Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 #6th row, Leaderboard button
 tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
 tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
-lb.protocol('WM_DELETE_WINDOW', closeLDR)#close button override
 
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
