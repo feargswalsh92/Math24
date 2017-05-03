@@ -1,9 +1,12 @@
+from tkinter import *
 import tkinter as tk
 import parser
 from random import randint
 import array
 import itertools
 from tkinter import messagebox
+from LB_Pkg.LB_Func import LDR
+from LB_Pkg.LB_Func import MessageBox
 
 winsCount=0
 lossesCount=0
@@ -144,6 +147,46 @@ class Math24Solver():
 root = tk.Tk()
 root.title('Math24')
 
+location = LDR.init_DB_CWD() #Path to location of leaderboard database file (current working directory)
+
+if  LDR.checkIfHighScore(location,winsCount):
+    name = MessageBox.mbox('Congratulation!!!\n New High Score '+str(winsCount)+'\n\nEnter your name', "ok", "cancel",True,False,True)
+    #function that adds leaders name and score to database file
+    LDR.appendToLeaderBoard(location, name, winsCount) #function that adds leaders name and score to data file
+
+#Leaderboard window setup
+lb = tk.Tk()
+lb.title('LeaderBoard')
+lb.attributes('-alpha', 0.9) #gives window a transparent appearance
+
+lb.withdraw()#hides the leaderboard window
+
+lbframe = tk.Frame(lb,  padx =8, pady = 8)
+lbframe.grid(column=0, row=0, sticky=(N, W, E, S))
+lbframe.columnconfigure(0, weight=1)
+lbframe.rowconfigure(0, weight=1)
+
+
+
+#button command for revealing leaderboard gui
+def viewLB(*args):
+    lb.deiconify()
+    i = 3 #variable that controls leaderboard name, score rows
+    topten = 0 #variable controls number of leader to print
+    LeaderBoardList = LDR.sortLeaderBoard(location) #return sorted list of leaders from database file
+    tk.Label(lbframe, text='Rank, Name, Score', font=("Calibri", 16)).grid(column=3, row=2, sticky=W)
+
+    #prints top ten leaders to the leaderboard gui
+    for leader in LeaderBoardList:
+        if topten<=9:
+            tk.Label(lbframe, text=str(topten+1)+', '+leader[0]+', '+str(leader[1]), font=("Calibri", 16), relief = GROOVE).grid(column=3, row=i, sticky=W)
+            i=i+1
+            topten = topten+1
+        else:
+            break
+ #button command for hiding leaderboard gui  
+def hideLB(*args):
+    lb.withdraw()
 
 
 ###### Constants
@@ -256,11 +299,15 @@ def calculate():
             display.insert(0, "You won!")
             winsCount+=1
             winLabelText.set("Wins: "+str(winsCount))
-
+            
             #disable number buttons after you win this set, so you cannot repeat it over and over again
             for i in range(4):
                 numberButton[i].config(state = "disabled")
-                            
+            if  LDR.checkIfHighScore(location,winsCount):
+                name = MessageBox.mbox('Congratulation!!!\n New High Score '+str(winsCount)+'\n\nEnter your name', "ok", "cancel",True,False,True)
+                #function that adds leaders name and score to database file
+                LDR.appendToLeaderBoard(location, name, winsCount) #function that adds leaders name and score to data file   
+             
         else:
             display.insert(0, "You lost!")
             lossesCount+=1
@@ -401,6 +448,10 @@ nextGame.grid(row = 5, column = 0, columnspan = 4, sticky = tk.W + tk.E)
 Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
+
+#6th row, Leaderboard button
+tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
+tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
 
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
