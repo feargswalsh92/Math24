@@ -1,12 +1,22 @@
+from tkinter import *
 import tkinter as tk
 import parser
 from random import randint
 import array
 import itertools
+<<<<<<< HEAD:Math24.py
 import time
+=======
+from tkinter import messagebox
+from LB_Pkg.LB_Func import LDR
+from LB_Pkg.LB_Func import MessageBox
+
+winsCount=0
+lossesCount=0
+>>>>>>> master:src/main/Math24.py
 
 class Math24Solver():
-    def _calculateEquation(self, lhs, operation, rhs):
+    def _calculateEquation(self, lhs: object, operation: object, rhs: object):    #-> object:
         """
         Calculates and returns the mathematical solution to the 
         equation depending on the operation
@@ -25,6 +35,8 @@ class Math24Solver():
             if rhs is not 0:
                 return lhs / rhs
 
+
+                #test
     def _is24(self, values, op1, op2, op3):
         """
         Checks whether the complete equation equates to 24.
@@ -139,7 +151,48 @@ class Math24Solver():
 root = tk.Tk()
 root.title('Math24')
 
+location = LDR.init_DB_CWD() #Path to location of leaderboard database file (current working directory)
 
+if  LDR.checkIfHighScore(location,winsCount):
+    name = MessageBox.mbox('Congratulation!!!\n New High Score '+str(winsCount)+'\n\nEnter your name', "ok", "cancel",True,False,True)
+    #function that adds leaders name and score to database file
+    LDR.appendToLeaderBoard(location, name, winsCount) #function that adds leaders name and score to data file
+
+#Leaderboard window setup
+lb = tk.Tk()
+lb.title('LeaderBoard')
+lb.attributes('-alpha', 0.9) #gives window a transparent appearance
+
+lb.withdraw()#hides the leaderboard window
+
+lbframe = tk.Frame(lb,  padx =50, pady = 15)
+lbframe.grid(column=0, row=0, sticky=(N, W, E, S))
+lbframe.columnconfigure(0, weight=1)
+lbframe.rowconfigure(0, weight=1)
+
+
+#button command for revealing leaderboard gui
+def viewLB(*args):
+    lb.deiconify()
+    i = 3 #variable that controls leaderboard name, score rows
+    topten = 0 #variable controls number of leader to print
+    LeaderBoardList = LDR.sortLeaderBoard(location) #return sorted list of leaders from database file
+    tk.Label(lbframe, text='Rank, Name, Score', font=("Calibri", 16)).grid(column=3, row=2, sticky=W)
+
+    #prints top ten leaders to the leaderboard gui
+    for leader in LeaderBoardList:
+        if topten<=9:
+            tk.Label(lbframe, text=str(topten+1)+', '+leader[0]+', '+str(leader[1]), font=("Calibri", 16), relief = GROOVE).grid(column=3, row=i, sticky=W)
+            i=i+1
+            topten = topten+1
+        else:
+            break
+ #button command for hiding leaderboard gui  
+def hideLB(*args):
+    lb.withdraw()
+
+def closeLDR():#overrides the close(x) button, instead triggers the hide view
+    hideLB()
 
 ###### Constants
 ##
@@ -149,7 +202,20 @@ MAX_ROW = 6                        ## Max rows and columns in the GUI
 MAX_COLUMN = 8
 PADSIZE = 8
 i = 0       ## for the insertion counter in Entry widget
+
+lastInputOperator = True       ## if last input is operator, it is true, you can input number; else it is false, and you can not input number. 
+
+b1=tk.Button()
+b2=tk.Button()
+b3=tk.Button()
+b4=tk.Button()
+numberButton = [b1,b2,b3,b4]   # use button array to activate or deactivate buttons
+
+result=tk.Button()
+
+
 ###############
+'''
 def factorial(operator):
     """Calculates the factorial of the number entered."""
     number = int(display.get())
@@ -163,29 +229,53 @@ def factorial(operator):
     except Exception:
         clear_all()
         display.insert(0, "Error")
+<<<<<<< HEAD:Math24.py
 
 #def timer():
+=======
+'''
+>>>>>>> master:src/main/Math24.py
 
 def clear_all():
     """clears all the content in the Entry widget"""
     display.delete(0, tk.END)
+    global numberButton
+    global lastInputOperator
+    for index in range (4):
+        numberButton[index].config(state = "active")
+    lastInputOperator = True
 
 
-def get_variables(num):
+def get_variables(index,num):
     """Gets the user input for operands and puts it inside the entry widget"""
     global i
-    display.insert(i, num)
-    i += 1
+    global lastInputOperator
+    global numberButton
+    if (lastInputOperator):
+        display.insert(i, num)
+        #single digital, display position is increased by 1
+        if (num <10):
+            i += 1
+        #double digitals, display position is increased by 2
+        else:
+            i = i+2
+        #disable button after you use the number, so all numbers can only be used once
+        numberButton[index].config(state = "disabled")
+
+        #you can not input another number after a number
+        lastInputOperator = False
     
 
 def get_operation(operator):
     """Gets the operand the user wants to apply on the functions"""
     global i
+    global lastInputOperator
     length = len(operator)
     display.insert(i, operator)
     i += length
+    lastInputOperator = True
 
-
+'''
 def undo():
     """removes the last entered operator/variable from entry widget"""
     whole_string = display.get()
@@ -198,27 +288,49 @@ def undo():
     else:
         clear_all() 
         display.insert(0, "Error, press AC")
-
+'''
+global attemptAtSolution
+attemptAtSolution=False
 
 def calculate():
     """
     Evaluates the expression
     ref : http://stackoverflow.com/questions/594266/equation-parsing-in-python
     """
+    global winsCount,lossesCount,lastInputOperator, numberButton,attemptAtSolution
+    
     whole_string = display.get()
     try:
         formulae = parser.expr(whole_string).compile()
         result = eval(formulae)
         clear_all()
-        if result == 24:
+        attemptAtSolution=True
+        if (result == 24):
             display.insert(0, "You won!")
+            winsCount+=1
+            winLabelText.set("Wins: "+str(winsCount))
+            
+            #disable number buttons after you win this set, so you cannot repeat it over and over again
+            for i in range(4):
+                numberButton[i].config(state = "disabled")
+            if  LDR.checkIfHighScore(location,winsCount):
+                name = MessageBox.mbox('Congratulation!!!\n New High Score '+str(winsCount)+'\n\nEnter your name', "ok", "cancel",True,False,True)
+                #function that adds leaders name and score to database file
+                LDR.appendToLeaderBoard(location, name, winsCount) #function that adds leaders name and score to data file   
+             
         else:
             display.insert(0, "You lost!")
+            lossesCount+=1
+            lossesLabelText.set("Losses: "+str(lossesCount))
+
+        
         #clear_all()
         #display.insert(0, result)
+        lastInputOperator = False
     except Exception:
         clear_all()
         display.insert(0, "Error!")
+        lastInputOperator = False
 
 
 def closeWindow():
@@ -228,12 +340,6 @@ def closeWindow():
 display = tk.Entry(root, font = ("Calibri", 32),bd = 20, insertwidth = 1)
 display.grid(row = 1, columnspan = 8 , sticky = tk.W + tk.E )
 
-#Create four random number between 1 and 13
-'''n1 = randint(1,13)
-n2 = randint(1,13)
-n3 = randint(1,13)
-n4 = randint(1,13)
-'''
 
 
 def getNumbers():
@@ -242,16 +348,41 @@ def getNumbers():
         a[i]=randint(1,13)
     return a
 
+def gameHelp():
+        gameInstructions="This game is easy to learn.All you have to do is to use any of the arithmentic operations to get the four numeric values that are presented to result in the value 24.If you get stuck, click the solution button to reveal the answer."
+        messagebox.showinfo(title="Game Instructions", message=gameInstructions)
 
 def newGame():
 
-    def displaySolution():
-        clear_all()
-        display.insert(0, solutionString) 
+    global b1,b2,b3,b4
+    global numberButton
+    global result
+    global attemptAtSolution
 
+    result.config(state = "active")
+    def displaySolution():
+        global results, lossesCount
+        clear_all()
+        display.insert(0, solutionString)
+
+        #if you click sulotion, then you fail in this set. Your lossesCount will be increased by one only
+        #if you press it in before you attempt a solution and press the "=" sign to evaluate the solution
+        if(attemptAtSolution==False):
+            lossesCount+=1
+            
+        lossesLabelText.set("Losses: "+str(lossesCount))
+        
+        #One you click sultion, all number buttons and equal button will be disabled, avoiding re-enter solution to get win-ponit
+        #You can only restart new game to activate all buttons
+        for i in range(4):
+            numberButton[i].config(state = "disabled")
+            result.config(state = "disabled")
+
+        #disable the solution button to prevent repeated clicks before starting a new game
+        solution.config(state = "disabled")
     clear_all()
     numbers = getNumbers()
-
+    attemptAtSolution=False
     #Call Math24Solver to find out if there are solutions for these numbers
     solver = Math24Solver()
 
@@ -259,19 +390,21 @@ def newGame():
     while (solver.solve(numbers) == "No Solutions"):
         numbers = getNumbers()
     #First row, four numbers
-    one = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    one.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
-    two = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(numbers[1]), padx = PADSIZE, pady = PADSIZE,font=FONT_LARGE, bd = 20)
-    two.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
-    three = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    three.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
-    four = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
-    four.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+    b1 = tk.Button(root, text = str(numbers[0]), command = lambda : get_variables(0,numbers[0]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b1.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W + tk.E)
+    b2 = tk.Button(root, text = str(numbers[1]), command = lambda : get_variables(1,numbers[1]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b2.grid(row = 2, column = 2, columnspan = 2, sticky = tk.W + tk.E)
+    b3 = tk.Button(root, text = str(numbers[2]), command = lambda : get_variables(2,numbers[2]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b3.grid(row = 2, column = 4,columnspan = 2, sticky = tk.W + tk.E)
+    b4 = tk.Button(root, text = str(numbers[3]), command = lambda : get_variables(3,numbers[3]), padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    b4.grid(row = 2 , column = 6,columnspan = 2, sticky = tk.W + tk.E)
+
+    numberButton = [b1,b2,b3,b4]
 
 
     solutionString = solver.solve(numbers)
 
-    solution = tk.Button(root, text = "solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
+    solution = tk.Button(root, text = "Solution", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
     solution.config(command=displaySolution)
     solution.grid(row = 5, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
@@ -305,26 +438,32 @@ result.grid(row = 3, column = 7, sticky = tk.W + tk.E)
 
 
 
-#Third row, recod win-num and lost-num
-winNum = tk.Button(root, text = "win 0", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "red", bd = 20)
-winNum.grid(row = 4, column = 0, columnspan = 4, sticky = tk.W + tk.E)
+#Third row, record win-num and lost-num
+winLabelText = tk.StringVar()
+winLabel = tk.Label( root, textvariable=winLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "green")
+winLabelText.set("Wins: "+str(winsCount))
+winLabel.grid(row = 4, column = 0, columnspan = 4, sticky = tk.W + tk.E)
 
-winNum = tk.Button(root, text = "lose 0", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "green", bd = 20)
-winNum.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
+lossesLabelText = tk.StringVar()
+lossesLabel = tk.Label( root, textvariable=lossesLabelText, padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, foreground = "red")
+lossesLabelText.set("Losses: "+str(lossesCount))
+lossesLabel.grid(row = 4, column = 4, columnspan = 4, sticky = tk.W + tk.E)
 
-
-#Fourth row, recod win-num and lost-num
+#Fourth row, record win-num and lost-num
 nextGame = tk.Button(root, text = "New Game", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
 nextGame.config(command=newGame)
 nextGame.grid(row = 5, column = 0, columnspan = 4, sticky = tk.W + tk.E)
 
 
-#Fifth row, recod win-num and lost-num
+#Fifth row, record win-num and lost-num
 Quit = tk.Button(root, text = "Quit", padx = PADSIZE, pady = PADSIZE, font=FONT_LARGE, bd = 20)
 Quit.config(command=closeWindow)
 Quit.grid(row = 6, column = 2, columnspan = 4, sticky = tk.W + tk.E)
 
-
+#6th row, Leaderboard button
+tk.Button(root, text="View LeaderBoard", command=viewLB).grid(column=3, row=7, sticky=W)
+tk.Button(root, text="Hide LeaderBoard", command=hideLB).grid(column=4, row=7, sticky=W)
+lb.protocol('WM_DELETE_WINDOW', closeLDR)#close button override
 
 # create a pulldown menu, and add it to the menu bar
 menubar = tk.Menu(root)
@@ -339,8 +478,16 @@ filemenu.add_command(label="Exit", command=closeWindow)
 
 aboutMenu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="About", menu=aboutMenu)
-aboutMenu.add_command(label="Help")
+
+helpMenu = tk.Menu(menubar, tearoff=0)
+aboutMenu.add_cascade(label="Help",menu=helpMenu)
 aboutMenu.add_command(label="Author")
+
+helpMenu.add_command(label="Game Instructions", command=gameHelp)
+
+
+
+
 
 
 
