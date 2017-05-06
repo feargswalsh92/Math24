@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from src.main import Math24Solver
 
-<<<<<<< HEAD
+
 
 class TestMath24Solver(TestCase):
     def test__calculateEquation(self):
